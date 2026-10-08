@@ -32,6 +32,7 @@ from config import (
 import voices
 validate_config()
 from avatar_service import create_avatar_video
+from semantic_search import generate_embedding, search_chunks, chunk_transcript
 # --------------------------
 # Cloudinary Config
 # --------------------------
@@ -588,6 +589,12 @@ async def process_lesson(data: LessonRequest, base_filename: str):
 
         with open(text_path, "w", encoding="utf-8") as f:
             f.write(script)
+            # Create semantic-search chunks
+         chunks = chunk_transcript(script)
+
+    # Generate embeddings for each chunk
+    for chunk in chunks:
+        chunk["embedding"] = generate_embedding(chunk["text"])    
 
         print(f"💾 Saved text to: {text_path}")
 
